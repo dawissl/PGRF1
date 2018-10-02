@@ -8,43 +8,57 @@ import java.awt.image.BufferedImage;
 
 public class PixelTest {
 
-    private JFrame window; //main window
-    private BufferedImage img;//drawed image
-    private JPanel panel; //panel used for drawing
+    private JFrame window;
+    private BufferedImage img; // objekt pro zápis pixelů
+    private Canvas canvas; // plátno pro vykreslení BufferedImage
 
     public PixelTest() {
-        //basic for creating window
         window = new JFrame();
-        window.setSize(1366,768);
+        // bez tohoto nastavení se okno zavře, ale aplikace stále běží na pozadí
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        window.setVisible(true);
-        window.setLocationRelativeTo(null);
-        //create panel and insert into the window
-       panel = new JPanel();
-       window.add(panel);
-        //create image - pixel
-       img = new BufferedImage(1366,768,BufferedImage.TYPE_INT_RGB);
+        window.setSize(800, 600); // velikost okna
+        window.setLocationRelativeTo(null);// vycentrovat okno
+        window.setTitle("PGRF1 cvičení"); // titulek okna
 
+        // inicializace image, nastavení rozměrů (nastavení typu - pro nás nedůležité)
+        img = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
 
-      // drawPixel(20,120, Color.magenta.getRGB());
+        // inicializace plátna, do kterého budeme kreslit img
+        canvas = new Canvas() {
+            // https://stackoverflow.com/a/44491919
+            @Override
+            public void paint(Graphics g) {
+                // při překreslení panelu zajistí vykreslení img
+                g.drawImage(img, 0, 0, null);
+            }
+        };
 
-       panel.addMouseListener(new MouseAdapter() {
-           @Override
-           public void mouseClicked(MouseEvent e) {
-               drawPixel(e.getX(),e.getY(),Color.magenta.getRGB());
-           }
-       });
+        window.add(canvas); // vložit plátno do okna
+        window.setVisible(true); // zorabzit okno
+
+        drawPixel(100, 50, Color.GREEN.getRGB());
+        // 0x00ff00 == Color.GREEN.getRGB()
+
+        canvas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                drawPixel(e.getX(), e.getY(), 0xffffff);
+            }
+        });
     }
 
-
-    private void drawPixel(int x, int y, int colour){
-        img.setRGB(x,y,colour);
-        panel.getGraphics().drawImage(img,0,0,null);
-
+    private void drawPixel(int x, int y, int color) {
+        // nastavit pixel do img
+        img.setRGB(x, y, color);
+        // říct plátnu, aby zobrazil aktuální img
+        canvas.getGraphics().drawImage(img, 0, 0, null);
+        // co dělá observer - https://stackoverflow.com/a/1684476
     }
 
     public static void main(String[] args) {
-        new PixelTest();
+        SwingUtilities.invokeLater(PixelTest::new);
+        // https://www.google.com/search?q=SwingUtilities.invokeLater
+        // https://www.javamex.com/tutorials/threads/invokelater.shtml
+        // https://www.google.com/search?q=java+double+colon
     }
-
 }
