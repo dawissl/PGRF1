@@ -41,12 +41,91 @@ public class Renderer {
     }
 
     public void drawLine (int x1, int y1, int x2, int y2,int color){
-        float k = (y2-y1)/(float)(x2-x1);
-        float q = y1-k*x1;
-    //problem pro minusove hodnoty, urcit hodnoty
-        for(int x=x1;x<=x2;x++){
-           int y=Math.round(k*x+q);
-           drawPixel(x,y,color);
+        float k = (y2 - y1) / (float) (x2 - x1);
+        // https://www.google.com/search?q=java+dividing+two+integers
+        float q = y1 - k * x1;
+
+        // řídící osa X
+        if (Math.abs(k) < 1) {
+            if (x1 > x2) {
+                int a = x1;
+                x1 = x2;
+                x2 = a;
+
+                a = y1;
+                y1 = y2;
+                y2 = a;
+            }
+
+            for (int x = x1; x <= x2; x++) {
+                int y = Math.round(k * x + q);
+                drawPixel(x, y, color);
+            }
+        } else {
+            if (x2 < x1) {
+                int a = x2;
+                x2 = x1;
+                x1 = a;
+
+                a = y2;
+                y2 = y1;
+                y1 = a;
+            }
+            for (int x = x1; x < x2; x++) {
+                int y = (int) (k * x + q);
+                drawPixel(x, y, color);
+            }
+
+        }
+    }
+
+    public void drawLineDda(int x1,int y1, int x2, int y2, int color) {
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+
+        if (Math.abs(y2 - y1) <= Math.abs(x2 - x1)) {
+
+            if ((x1 == x2) && (y1 == y2)) {
+                drawPixel(x1, y1, color);
+
+            } else {
+                if (x2 < x1) {
+                    int tmp = x2;
+                    x2 = x1;
+                    x1 = tmp;
+
+                    tmp = y2;
+                    y1 = tmp;
+                }
+
+                float k = dy / dx;
+                float y = y1;
+
+                for (int x = x1; x <= x2; x++) {
+
+                    drawPixel(x, Math.round(y), color);
+                    y += k;
+                }
+            }
+        } else {
+
+            if (y2 < y1) {
+                int tmp = x2;
+                x1 = tmp;
+
+                tmp = y2;
+                y2 = y1;
+                y1 = tmp;
+            }
+
+            float k = dx / dy;
+            float x = x1;
+            for (int y = y1; y <= y2; y++) {
+
+                drawPixel(Math.round(x), y, color);
+                x += k;
+            }
+
         }
     }
 }

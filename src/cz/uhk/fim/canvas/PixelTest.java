@@ -38,7 +38,7 @@ public class PixelTest {
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                renderer.drawPixel(e.getX(), e.getY(), 0xffffff);
+                renderer.drawPixel(e.getX(), e.getY(), Color.yellow.getRGB());
             }
         });
 
@@ -46,9 +46,11 @@ public class PixelTest {
             @Override
             public void mouseDragged(MouseEvent e) {
                 renderer.clear();
-                renderer.drawLine(50,50,e.getX(),e.getY(),Color.BLUE.getRGB());
+                renderer.drawLineDda(100,100,e.getX(),e.getY(),Color.BLUE.getRGB());
             }
         });
+
+
 
 
     }
